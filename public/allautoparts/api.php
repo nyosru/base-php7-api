@@ -5,6 +5,11 @@ if (empty($_REQUEST['search']))
 
 require('./index_f.php');
 
+if (extension_loaded('soap')) {
+    echo 'SOAP поддерживается в вашей конфигурации PHP.';
+} else {
+    echo 'SOAP НЕ поддерживается в вашей конфигурации PHP.';
+}
 
 $cfgVar = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../.env',true);
 
