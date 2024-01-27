@@ -49,7 +49,7 @@ if (validateData($data, $errors)) {
     require_once("./lib/soap_transport.php");
     $SOAP = new soap_transport();
 
-    var_dump([__LINE__,$SOAP]);
+//    var_dump([__LINE__,$SOAP]);
 
     //Генерация запроса
     $requestXMLstring = createSearchRequestXML($data2);
@@ -60,8 +60,8 @@ if (validateData($data, $errors)) {
     //Выполнение запроса
     $responceXML = $SOAP->query('SearchOffer', array('SearchParametersXml' => $requestXMLstring), $errors);
 
-//    var_dump($responceXML);
-//    echo PHP_EOL.PHP_EOL;
+    var_dump([__LINE__,$responceXML]);
+    echo PHP_EOL.PHP_EOL;
 
     //Пожалуйста обратите внимание что параметр именованный - SearchParametersXml
     //Для разных методов сервисов это имя параметра разное и в документации оно нигде не описано
