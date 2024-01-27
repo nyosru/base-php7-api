@@ -19,11 +19,14 @@ if (!empty($_REQUEST['secret']) && $_REQUEST['secret'] == $cfgVar['ALLAUTOPARTS_
 }
 
 //Значения формы по-умолчанию
+$data2 =
 $data = [
     'session_id' => '22148',
     'session_guid' => '',
-    'session_login' => $cfgVar['ALLAUTOPARTS_API_session_login'],
-    'session_password' => $cfgVar['ALLAUTOPARTS_API_session_password'],
+//    'session_login' => $cfgVar['ALLAUTOPARTS_API_session_login'],
+    'session_login' => $session_login,
+//    'session_password' => $cfgVar['ALLAUTOPARTS_API_session_password'],
+    'session_password' => $session_password,
     // 'search_code' => 'OC47',
     'search_code' => $_REQUEST['search'],
     'instock' => 'ON',
@@ -42,7 +45,7 @@ if (validateData($data, $errors)) {
     $SOAP = new soap_transport();
 
     //Генерация запроса
-    $requestXMLstring = createSearchRequestXML($data);
+    $requestXMLstring = createSearchRequestXML($data2);
 
     var_dump($requestXMLstring);
     echo PHP_EOL.PHP_EOL;
