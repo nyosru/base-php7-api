@@ -2,7 +2,7 @@
 
 if (empty($_REQUEST['search']))
     die();
-
+$errors = [];
 require('./index_f.php');
 
 //if (extension_loaded('soap')) {
