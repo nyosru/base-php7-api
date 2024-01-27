@@ -6,7 +6,8 @@ if (empty($_REQUEST['search']))
 require('./index_f.php');
 
 
-$cfgVar = parse_ini_file('./../../.env');
+$cfgVar = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../.env',true);
+
 if (!empty($_REQUEST['secret']) && $_REQUEST['secret'] == $cfgVar['ALLAUTOPARTS_API_secret']) {
     $session_login = $cfgVar['ALLAUTOPARTS_API_session_login'];
     $session_password = $cfgVar['ALLAUTOPARTS_API_session_password'];
@@ -42,6 +43,10 @@ if (validateData($data, $errors)) {
 
     //Генерация запроса
     $requestXMLstring = createSearchRequestXML($data);
+
+    var_dump($requestXMLstring);
+    echo '<br/>';
+    echo '<br/>';
 
     //Выполнение запроса
     $responceXML = $SOAP->query('SearchOffer', array('SearchParametersXml' => $requestXMLstring), $errors);
