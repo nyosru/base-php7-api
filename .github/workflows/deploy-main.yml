@@ -73,7 +73,7 @@ jobs:
   sms_end:
     runs-on: ubuntu-latest
     # needs: [deploy_composer, deploy_npm]
-    needs: deploy_composer
+    needs: deploy
     steps:
       - name: send telega
         uses: appleboy/telegram-action@master
