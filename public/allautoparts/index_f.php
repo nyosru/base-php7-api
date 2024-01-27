@@ -63,8 +63,6 @@ function validateData(&$data, &$errors)
    $data['periodmin'] = $data['periodmin'] ? (int)$data['periodmin'] : -1;
    $data['periodmax'] = $data['periodmax'] ? (int)$data['periodmax'] : -1;
 
-//   var_dump($errors);
-
    return count($errors) ? false : true;
 }
 

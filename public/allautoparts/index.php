@@ -1,7 +1,5 @@
 <?php
 
-//use apiAllAutoparts\lib\soap_transport;
-
 require( './index_f.php' );
 
 /**
