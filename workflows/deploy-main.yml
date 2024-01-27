@@ -1,0 +1,87 @@
+name: Deploy php74 api
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  VPS_IP: 45.12.72.4
+  VPS_USERNAME: root
+  DIR: /home_as/base-php7-api
+  GIT_BRANCH: origin/main
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: "refresh git & restart docker"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.VPS_IP }}
+          username: ${{ env.VPS_USERNAME }}
+          key: ${{ secrets.DEPLOY_KEY }}
+          script: |
+            cd ${{ env.DIR }}
+            git fetch --all
+            git reset --hard ${{ env.GIT_BRANCH }}
+
+#  deploy_composer_stop:
+#    runs-on: ubuntu-latest
+#    needs: deploy
+#    steps:
+#      - uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ env.VPS_IP }}
+#          username: ${{ env.VPS_USERNAME }}
+#          key: ${{ secrets.DEPLOY_KEY }}
+#          script: |
+#            cd ${{ env.DIR }}
+#            docker-compose down
+#
+#  deploy_composer:
+#    runs-on: ubuntu-latest
+#    needs: deploy_composer_stop
+#    steps:
+#      - uses: appleboy/ssh-action@master
+#        with:
+#
+#          host: ${{ env.VPS_IP }}
+#          username: ${{ env.VPS_USERNAME }}
+#          key: ${{ secrets.DEPLOY_KEY }}
+#
+#          script: |
+#            cd ${{ env.DIR }}
+#            make prod
+     
+  sms_start:
+    runs-on: ubuntu-latest
+    steps:
+      - name: send telega
+        uses: appleboy/telegram-action@master
+        with:
+          # to: ${{ secrets.TELEGRAM_TO }}
+          to: 360209578, phpcat,
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🐥🐥🐥 ${{ github.repository }} 
+            ${{ github.event_name }} > ${{ github.event.head_commit.message }}
+            👨🏻‍💻 ${{github.actor}} (${{ github.run_id }})
+
+  sms_end:
+    runs-on: ubuntu-latest
+    # needs: [deploy_composer, deploy_npm]
+    needs: deploy_composer
+    steps:
+      - name: send telega
+        uses: appleboy/telegram-action@master
+        with:
+          # to: ${{ secrets.TELEGRAM_TO }}
+          to: 360209578, phpcat,
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🍀🍀🍀 ${{ github.repository }} 
+            ${{ github.event_name }} > ${{ github.event.head_commit.message }}
+            👨🏻‍💻 ${{github.actor}} (${{ github.run_id }})
