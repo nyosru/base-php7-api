@@ -5,11 +5,11 @@ if (empty($_REQUEST['search']))
 
 require('./index_f.php');
 
-if (extension_loaded('soap')) {
-    echo 'SOAP поддерживается в вашей конфигурации PHP.';
-} else {
-    echo 'SOAP НЕ поддерживается в вашей конфигурации PHP.';
-}
+//if (extension_loaded('soap')) {
+//    echo 'SOAP поддерживается в вашей конфигурации PHP.';
+//} else {
+//    echo 'SOAP НЕ поддерживается в вашей конфигурации PHP.';
+//}
 
 $cfgVar = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../.env',true);
 
@@ -48,6 +48,8 @@ if (validateData($data, $errors)) {
     //Подключение класса SOAP-клиента и создание экземпляра
     require_once("./lib/soap_transport.php");
     $SOAP = new soap_transport();
+
+    var_dump([__LINE__,$SOAP]);
 
     //Генерация запроса
     $requestXMLstring = createSearchRequestXML($data2);
