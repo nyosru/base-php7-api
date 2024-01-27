@@ -47,14 +47,14 @@ if (validateData($data, $errors)) {
     //Генерация запроса
     $requestXMLstring = createSearchRequestXML($data2);
 
-    var_dump($requestXMLstring);
-    echo PHP_EOL.PHP_EOL;
+//    var_dump($requestXMLstring);
+//    echo PHP_EOL.PHP_EOL;
 
     //Выполнение запроса
     $responceXML = $SOAP->query('SearchOffer', array('SearchParametersXml' => $requestXMLstring), $errors);
 
-    var_dump($responceXML);
-    echo PHP_EOL.PHP_EOL;
+//    var_dump($responceXML);
+//    echo PHP_EOL.PHP_EOL;
 
     //Пожалуйста обратите внимание что параметр именованный - SearchParametersXml
     //Для разных методов сервисов это имя параметра разное и в документации оно нигде не описано
@@ -81,6 +81,7 @@ if (validateData($data, $errors)) {
 
     //Получен ответ
     if ($responceXML) {
+
         //Установка параметра session_guid, полученного из ответа сервиса.
         //Параметр используется, как замена связке session_login + session_password,
         //и при повторном поиске может быть подставлен в запрос вместо неё
@@ -89,6 +90,9 @@ if (validateData($data, $errors)) {
 
         //Разбор данных ответа
         $result = parseSearchResponseXML($responceXML);
+
+        var_dump([__LINE__,$result]);
+
     }
 }
 
