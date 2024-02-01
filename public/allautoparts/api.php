@@ -57,12 +57,6 @@ require('./index_f.php');
 //$cfgVar = parse_ini_file('./../.env');
 $cfgVar = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/../.env', true);
 
-
-//$cfgVar = parse_ini_file('./../.env');
-// echo '<pre>';echo print_r($cfgVar);echo '</pre>';
-// die();
-
-
 if (!empty($cfgVar['ALLAUTOPARTS_API_secret']) && !empty($_REQUEST['login']) && $_REQUEST['login'] == $cfgVar['ALLAUTOPARTS_API_secret']) {
     $id = $cfgVar['ALLAUTOPARTS_API_session_id'];
     $login = $cfgVar['ALLAUTOPARTS_API_session_login'];
@@ -74,7 +68,7 @@ if (!empty($cfgVar['ALLAUTOPARTS_API_secret']) && !empty($_REQUEST['login']) && 
 }
 
 if ($password == 'x') {
-    die(json_encode(['error' => true, 'code' => __LINE__]));
+    die(json_encode(['error' => true, 'code' => __LINE__, 'in' => $_REQUEST ]));
 }
 
 
