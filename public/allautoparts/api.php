@@ -73,6 +73,10 @@ if (!empty($cfgVar['ALLAUTOPARTS_API_secret']) && !empty($_REQUEST['login']) && 
     $password = $_REQUEST['password'] ?? 'x';
 }
 
+if ($password == 'x') {
+    die(json_encode(['error' => true, 'code' => __LINE__]));
+}
+
 
 //Обработка входных данных:
 //Значения формы по-умолчанию
