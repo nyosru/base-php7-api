@@ -196,7 +196,8 @@ if (validateData($parsed_data, $errors)) {
 // )
 
 
-$diff = sprintf('%.6f sec.', microtime(true) - $timer_start);
+//$diff = sprintf('%.6f sec.', microtime(true) - $timer_start);
+$diff = round( microtime(true) - $timer_start , 5);
 //echo "Время выполнения: $diff"; // Время выполнения: 0.000014 sec.
 
 die(json_encode(['data' => $result, 'status' => 'success', 'timer' => $diff]));
