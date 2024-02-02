@@ -31,6 +31,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 if (empty($_REQUEST['search']))
     die();
 
+
+$timer_start = microtime(true);
+
+
 // die($_SERVER['SERVER_NAME']);
 
 // if( $_SERVER['SERVER_NAME'] == 'localhost' ){
@@ -191,4 +195,8 @@ if (validateData($parsed_data, $errors)) {
 //    [Reference] => 901911655
 // )
 
-die(json_encode(['data' => $result, 'status' => 'success']));
+
+$diff = sprintf('%.6f sec.', microtime(true) - $timer_start);
+//echo "Время выполнения: $diff"; // Время выполнения: 0.000014 sec.
+
+die(json_encode(['data' => $result, 'status' => 'success', 'timer' => $diff]));
