@@ -68,7 +68,7 @@ if (!empty($cfgVar['ALLAUTOPARTS_API_secret']) && !empty($_REQUEST['login']) && 
 }
 
 if ($password == 'x') {
-    die(json_encode(['error' => true, 'code' => __LINE__, 'in' => $_REQUEST ]));
+    die(json_encode(['error' => true, 'code' => __LINE__, 'in' => $_REQUEST]));
 }
 
 
@@ -93,72 +93,74 @@ $defaults = array(
 
 //Поиск:
 // $action = isset($_POST['do']) ? $_POST['do'] : FALSE;
-$action = 'search';
+//$action = 'search';
+//
+//if ($action !== FALSE) {
+//
+//    //Нажата одна из кнопок на форме
+//    switch ($action) {
+//
+//        //Нажата кнопка "Поиск"
+//        case 'search':
 
-if ($action !== FALSE) {
+$errors = array();
+$parsed_data = $data;   //Данные из формы копируются в другую переменную, чтобы
+//подготовить их для формирования запроса.
+//Исходные данные будут отображены на форме.
 
-    //Нажата одна из кнопок на форме
-    switch ($action) {
+$result = [];
 
-        //Нажата кнопка "Поиск"
-        case 'search':
+//Проверка данных
+if (validateData($parsed_data, $errors)) {
 
-            $errors = array();
-            $parsed_data = $data;   //Данные из формы копируются в другую переменную, чтобы
-            //подготовить их для формирования запроса.
-            //Исходные данные будут отображены на форме.
+    //Подключение класса SOAP-клиента и создание экземпляра
+    require_once("lib/soap_transport.php");
+    $SOAP = new soap_transport();
 
-            //Проверка данных
-            if (validateData($parsed_data, $errors)) {
+    //Генерация запроса
+    $requestXMLstring = createSearchRequestXML($parsed_data);
 
-                //Подключение класса SOAP-клиента и создание экземпляра
-                require_once("lib/soap_transport.php");
-                $SOAP = new soap_transport();
-
-                //Генерация запроса
-                $requestXMLstring = createSearchRequestXML($parsed_data);
-
-                //Выполнение запроса
-                $responceXML = $SOAP->query('SearchOffer', array('SearchParametersXml' => $requestXMLstring), $errors);
-                //Пожалуйста обратите внимание что параметр именованный - SearchParametersXml
-                //Для разных методов сервисов это имя параметра разное и в документации оно нигде не описано
-                //Для того, чтобы узнать имя параметра следует смотреть WSDL схему
-                /*
-                   Вот примерный порядок действий чтобы узнать имя параметра:
-                   1. Открываем WSDL схему документа броузером, например, Google Chrome
-                   Для этого открываем URL https://allautoparts.ru/WEBService/SearchService.svc/wsdl?wsdl
-                   2. Находим строки
-                   <xsd:schema targetNamespace="http://tempuri.org/Imports">
-                      <xsd:import schemaLocation="https://allautoparts.ru/WEBService/SearchService.svc/wsdl?xsd=xsd0" namespace="http://tempuri.org/"/>
-                      <xsd:import schemaLocation="https://allautoparts.ru/WEBService/SearchService.svc/wsdl?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
-                   </xsd:schema>
-                   3. Открываем url https://allautoparts.ru/WEBService/SearchService.svc/wsdl?xsd=xsd0
-                   4. Находим строки соответствующие методу, который вызываем и узнаем имя параметра
-                   <xs:element name="SearchOffer">
-                      <xs:complexType>
-                         <xs:sequence>
-                            <xs:element minOccurs="0" name="SearchParametersXml" nillable="true" type="xs:string"/>
-                         </xs:sequence>
-                      </xs:complexType>
-                   </xs:element>
-                   */
+    //Выполнение запроса
+    $responceXML = $SOAP->query('SearchOffer', array('SearchParametersXml' => $requestXMLstring), $errors);
+    //Пожалуйста обратите внимание что параметр именованный - SearchParametersXml
+    //Для разных методов сервисов это имя параметра разное и в документации оно нигде не описано
+    //Для того, чтобы узнать имя параметра следует смотреть WSDL схему
+    /*
+       Вот примерный порядок действий чтобы узнать имя параметра:
+       1. Открываем WSDL схему документа броузером, например, Google Chrome
+       Для этого открываем URL https://allautoparts.ru/WEBService/SearchService.svc/wsdl?wsdl
+       2. Находим строки
+       <xsd:schema targetNamespace="http://tempuri.org/Imports">
+          <xsd:import schemaLocation="https://allautoparts.ru/WEBService/SearchService.svc/wsdl?xsd=xsd0" namespace="http://tempuri.org/"/>
+          <xsd:import schemaLocation="https://allautoparts.ru/WEBService/SearchService.svc/wsdl?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/"/>
+       </xsd:schema>
+       3. Открываем url https://allautoparts.ru/WEBService/SearchService.svc/wsdl?xsd=xsd0
+       4. Находим строки соответствующие методу, который вызываем и узнаем имя параметра
+       <xs:element name="SearchOffer">
+          <xs:complexType>
+             <xs:sequence>
+                <xs:element minOccurs="0" name="SearchParametersXml" nillable="true" type="xs:string"/>
+             </xs:sequence>
+          </xs:complexType>
+       </xs:element>
+       */
 
 
-                //Получен ответ
-                if ($responceXML) {
-                    //Установка параметра session_guid, полученного из ответа сервиса.
-                    //Параметр используется, как замена связке session_login + session_password,
-                    //и при повторном поиске может быть подставлен в запрос вместо неё
-                    $attr = $responceXML->rows->attributes();
-                    $data['session_guid'] = (string)$attr['SessionGUID'];
+    //Получен ответ
+    if ($responceXML) {
+        //Установка параметра session_guid, полученного из ответа сервиса.
+        //Параметр используется, как замена связке session_login + session_password,
+        //и при повторном поиске может быть подставлен в запрос вместо неё
+        $attr = $responceXML->rows->attributes();
+        $data['session_guid'] = (string)$attr['SessionGUID'];
 
-                    //Разбор данных ответа
-                    $result = parseSearchResponseXML($responceXML);
-                }
-            }
-            break;
+        //Разбор данных ответа
+        $result = parseSearchResponseXML($responceXML);
     }
 }
+//            break;
+//    }
+//}
 
 
 // (
@@ -189,4 +191,4 @@ if ($action !== FALSE) {
 //    [Reference] => 901911655
 // )
 
-die(json_encode($result));
+die(json_encode(['data' => $result, 'status' => 'success']));
